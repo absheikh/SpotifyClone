@@ -40,7 +40,7 @@ class GetStartedPage extends StatelessWidget {
                 Spacer(),
                 Column(
                   children: [
-                    Text("Enjoy listening to music  ",
+                    Text("Enjoy listening to music",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color:Colors.white),
                       textAlign: TextAlign.center,
                     ),
