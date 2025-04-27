@@ -6,23 +6,21 @@ import 'package:spotify_clone/common/widgets/button/basic_button.dart';
 import 'package:spotify_clone/common/widgets/inputs/basic_input.dart';
 import 'package:spotify_clone/core/configs/assets/app_vectors.dart';
 import 'package:spotify_clone/core/configs/theme/app_colors.dart';
-import 'package:spotify_clone/presentation/auth/pages/signin.dart';
+import 'package:spotify_clone/presentation/auth/pages/signup.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class SigninPage extends StatefulWidget {
+  const SigninPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  State<SigninPage> createState() => _SigninPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
-  final TextEditingController fullNameController = TextEditingController();
+class _SigninPageState extends State<SigninPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
   void dispose() {
-    fullNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -33,10 +31,10 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BasicAppBar(
-        title: SvgPicture.asset(
-          AppVectors.logo,
+          title: SvgPicture.asset(
+            AppVectors.logo,
             height: 33,
-        )
+          )
       ),
       // bottomNavigationBar: _footerText(context),
       body: SingleChildScrollView(
@@ -46,12 +44,7 @@ class _SignupPageState extends State<SignupPage> {
         child: Column(
           children: [
             SizedBox(height: 47),
-            _registerText(context),
-            SizedBox(height: 15),
-            BasicInput(
-                controller: fullNameController,
-                hintText: "Full Name"
-            ),
+            _signinText(context),
             SizedBox(height: 15),
             BasicInput(
                 controller: emailController,
@@ -64,10 +57,12 @@ class _SignupPageState extends State<SignupPage> {
                 hintText: "Password",
                 isPassword:true
             ),
+            SizedBox(height: 10),
+            _recoverPasswordText(context),
             SizedBox(height: 20),
             BasicButton(
                 onPressed: (){},
-                title: "Create Account"
+                title: "Sign In"
             ),
             SizedBox(height: 20),
             _orText(context),
@@ -82,11 +77,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 }
 
-Widget _registerText(BuildContext context) {
-
+Widget _signinText(BuildContext context) {
   return Column(
     children: [
-      Text("Register",
+      Text("Sign In",
         style: TextStyle(fontWeight: FontWeight.bold,
             fontSize: 25,
             color: context.isDarkMode ? Colors.white : Color(0xff383838)),
@@ -110,27 +104,35 @@ Widget _registerText(BuildContext context) {
     ],
   );
 }
+Widget _recoverPasswordText(BuildContext context) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text("Recover Password",
+      style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14),
+      ),
+  );
+}
 
 
 Widget _orText(BuildContext context){
   return Row(
     children: [
       Expanded(
-        flex:1,
-        child: Container(
-          height: 1,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                context.isDarkMode?Color(0xFF5B5B5B) : Color(0xffB0B0B0),
-                context.isDarkMode?Color(0xFF252525) : Color(0xffD3D3D3),
-              ],
+          flex:1,
+          child: Container(
+            height: 1,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  context.isDarkMode?Color(0xFF5B5B5B) : Color(0xffB0B0B0),
+                  context.isDarkMode?Color(0xFF252525) : Color(0xffD3D3D3),
+                ],
+              ),
             ),
-          ),
-        )
+          )
       ),
       SizedBox(width: 11),
       Text("Or",
@@ -172,8 +174,8 @@ Widget _socialIcons(BuildContext context){
       GestureDetector(
         onTap: (){},
         child: SvgPicture.asset(
-          AppVectors.apple,
-          color: context.isDarkMode? Colors.white: Color(0xff303030)
+            AppVectors.apple,
+            color: context.isDarkMode? Colors.white: Color(0xff303030)
         ),
       ),
     ],
@@ -183,12 +185,12 @@ Widget _socialIcons(BuildContext context){
 Widget _footerText(BuildContext context){
   return Padding(
     padding: const EdgeInsets.symmetric(
-      vertical: 15
+        vertical: 15
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Do you have an account?",
+        Text("Don't have an account?",
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14,
@@ -198,11 +200,11 @@ Widget _footerText(BuildContext context){
           onPressed: (){
             Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (BuildContext context)=> const SigninPage()
+                MaterialPageRoute(builder: (BuildContext context)=> const SignupPage()
                 )
             );
           },
-          child: Text("Sign In",
+          child: Text("Sign Up",
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 14,
