@@ -46,7 +46,7 @@ class GetStartedPage extends StatelessWidget {
                     ),
                     SizedBox(height: 21),
                     Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis enim purus sed phasellus. Cursus ornare id scelerisque aliquam.",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color:Color(0xff797979)),
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17, color:Color(0xff797979)),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 37),

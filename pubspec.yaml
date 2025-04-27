@@ -37,6 +37,7 @@ dependencies:
   flutter_svg: ^2.1.0
   flutter_bloc:
   hydrated_bloc:
+  path_provider:
 
 dev_dependencies:
   flutter_test:
