@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
+import 'package:spotify_clone/common/widgets/appbar/app_bar.dart';
 import 'package:spotify_clone/common/widgets/button/basic_button.dart';
 import 'package:spotify_clone/core/configs/assets/app_images.dart';
 import 'package:spotify_clone/core/configs/assets/app_vectors.dart';
@@ -12,8 +13,8 @@ class SignupOrSignin extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-
         children: [
+          BasicAppBar(),
           Align(
               alignment: Alignment.topRight,
               child:SvgPicture.asset(
