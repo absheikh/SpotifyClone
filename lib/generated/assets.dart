@@ -13,6 +13,7 @@ class Assets {
   static const String vectorsApple = 'assets/vectors/apple.svg';
   static const String vectorsBottomPattern = 'assets/vectors/bottom_pattern.svg';
   static const String vectorsGoogle = 'assets/vectors/google.svg';
+  static const String vectorsHomepageCoverPattern = 'assets/vectors/homepage_cover_pattern.svg';
   static const String vectorsMoon = 'assets/vectors/moon.svg';
   static const String vectorsSpotifyLogo = 'assets/vectors/spotify_logo.svg';
   static const String vectorsSun = 'assets/vectors/sun.svg';

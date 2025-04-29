@@ -9,5 +9,6 @@ class AppVectors{
   static const String bottomPattern = '${basePath}bottom_pattern$format';
   static const String google = '${basePath}google$format';
   static const String apple = '${basePath}apple$format';
+  static const String homepage_cover_pattern = '${basePath}homepage_cover_pattern$format';
 
 }
