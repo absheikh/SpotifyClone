@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spotify_clone/domain/repository/auth/auth.dart';
 import '../../models/auth/signin_model.dart';
 import '../../models/auth/signup_model.dart';

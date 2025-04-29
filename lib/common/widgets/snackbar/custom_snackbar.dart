@@ -6,20 +6,28 @@ void showCustomSnackbar({
   required String title,
   required String message,
   required ContentType contentType,
+  Duration duration = const Duration(seconds: 3),
 }) {
-  final snackBar = SnackBar(
-    elevation: 0,
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.transparent,
-    margin: const EdgeInsets.only(top: 20, left: 20, right: 20), // Position at top
-    content: AwesomeSnackbarContent(
-      title: title,
-      message: message,
-      contentType: contentType,
+  final overlay = Overlay.of(context);
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: MediaQuery.of(context).viewInsets.top + 50,
+      left: 16,
+      right: 16,
+      child: Material(
+        color: Colors.transparent,
+        child: AwesomeSnackbarContent(
+          title: title,
+          message: message,
+          contentType: contentType,
+        ),
+      ),
     ),
   );
 
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(snackBar);
+  // Insert the overlay
+  overlay.insert(overlayEntry);
+
+  // Remove it after the duration
+  Future.delayed(duration, () => overlayEntry.remove());
 }

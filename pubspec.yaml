@@ -40,8 +40,10 @@ dependencies:
   path_provider:
   firebase_core:
   firebase_auth:
+  cloud_firestore:
   get_it:
   dartz:
+  awesome_snackbar_content:
 
 dev_dependencies:
   flutter_test:
@@ -49,7 +51,7 @@ dev_dependencies:
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
+  # activated in the `analysis_options.yaml` file located at the home of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0

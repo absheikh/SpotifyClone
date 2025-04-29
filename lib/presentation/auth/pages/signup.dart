@@ -1,12 +1,18 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/widgets/appbar/app_bar.dart';
 import 'package:spotify_clone/common/widgets/button/basic_button.dart';
 import 'package:spotify_clone/common/widgets/inputs/basic_input.dart';
+import 'package:spotify_clone/common/widgets/snackbar/custom_snackbar.dart';
 import 'package:spotify_clone/core/configs/assets/app_vectors.dart';
 import 'package:spotify_clone/core/configs/theme/app_colors.dart';
+import 'package:spotify_clone/data/models/auth/signup_model.dart';
+import 'package:spotify_clone/domain/usecases/auth/signup.dart';
 import 'package:spotify_clone/presentation/auth/pages/signin.dart';
+import '../../../service_locator.dart';
+import '../../home/pages/home.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -16,17 +22,86 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
+
+  bool _validateForm() {
+    if (_fullNameController.text.trim().isEmpty ||
+        _emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
+
+      showCustomSnackbar(
+        context: context,
+        title: 'Error',
+        message: 'All fields are required',
+        contentType: ContentType.failure,
+      );
+
+      return false;
+    }
+
+    // Basic email format check (can be improved)
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(_emailController.text.trim())) {
+      showCustomSnackbar(
+        context: context,
+        title: 'Error',
+        message: 'Invalid email address',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+
+  bool _isLoading = false;
+
+  void signup() async {
+    if (!_validateForm()) return;
+
+    setState(() => _isLoading = true);
+
+    var res = await sl<SignupUseCase>().call(
+      params: SignupModel(
+        fullName: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      ),
+    );
+
+    setState(() => _isLoading = false);
+
+    res.fold(
+          (l) {
+        showCustomSnackbar(
+          context: context,
+          title: "Error",
+          message: l,
+          contentType: ContentType.failure,
+        );
+      },
+          (r) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+              (route) => false,
+        );
+      },
+    );
+  }
+
+
 
 
   @override
@@ -36,7 +111,8 @@ class _SignupPageState extends State<SignupPage> {
         title: SvgPicture.asset(
           AppVectors.logo,
             height: 33,
-        )
+        ),
+        displayBack: true,
       ),
       // bottomNavigationBar: _footerText(context),
       body: SingleChildScrollView(
@@ -49,25 +125,29 @@ class _SignupPageState extends State<SignupPage> {
             _registerText(context),
             SizedBox(height: 15),
             BasicInput(
-                controller: fullNameController,
-                hintText: "Full Name"
+                controller: _fullNameController,
+                hintText: "Full Name",
+                isRequired:true
             ),
             SizedBox(height: 15),
             BasicInput(
-                controller: emailController,
+                controller: _emailController,
                 hintText: "Email address",
-                isEmail:true
+                isEmail:true,
+                isRequired:true
             ),
             SizedBox(height: 15),
             BasicInput(
-                controller: passwordController,
+                controller: _passwordController,
                 hintText: "Password",
-                isPassword:true
+                isPassword:true,
+                isRequired:true
             ),
             SizedBox(height: 20),
             BasicButton(
-                onPressed: (){},
-                title: "Create Account"
+                onPressed: signup,
+                title: "Create Account",
+                loading:_isLoading
             ),
             SizedBox(height: 20),
             _orText(context),

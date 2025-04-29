@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -15,28 +16,39 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   @override
   Future<Either> signin(SigninModel model) async {
     try {
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      await _firebaseAuth.signInWithEmailAndPassword(
         email: model.email,
         password: model.password,
       );
-      return Right(userCredential);
+
+      return Right("Login Successful");
     } on FirebaseAuthException catch (e) {
-      return Left(e.message);
+      String message = "";
+      if(e.code == "invalid-email"){
+        message = "Invalid email or password";
+      } else if(e.code == "invalid-credential"){
+        message = "Invalid email or password";
+      }
+      return Left(message);
     }
   }
 
   @override
   Future<Either> signup(SignupModel model) async {
     try {
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      final data = await _firebaseAuth.createUserWithEmailAndPassword(
         email: model.email,
         password: model.password,
       );
 
-      await userCredential.user?.updateDisplayName(model.fullName);
-      await userCredential.user?.reload();
+      FirebaseFirestore.instance.collection("Users").add(
+          {
+            'name':model.fullName,
+            'email':data.user?.email
+          }
+      );
 
-      return Right(userCredential);
+      return Right("Signup Successful");
     } on FirebaseAuthException catch (e) {
       String message = "";
       if(e.code == "weak-password"){

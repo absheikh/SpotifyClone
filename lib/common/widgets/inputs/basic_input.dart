@@ -5,6 +5,7 @@ class BasicInput extends StatefulWidget {
   final String hintText;
   final bool isEmail;
   final bool isPassword;
+  final bool isRequired;
 
   const BasicInput({
     super.key,
@@ -12,6 +13,7 @@ class BasicInput extends StatefulWidget {
     required this.hintText,
     this.isEmail = false,
     this.isPassword = false,
+    this.isRequired = false
   });
 
   @override
@@ -23,19 +25,28 @@ class _BasicInputState extends State<BasicInput> {
   bool isObscured = true; // for password visibility toggle
 
   void validateInput(String value) {
+    if (widget.isRequired && value.trim().isEmpty) {
+      setState(() {
+        errorText = "${widget.hintText} is required";
+      });
+      return;
+    }
+
     if (widget.isEmail) {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
       if (!emailRegex.hasMatch(value)) {
         setState(() {
           errorText = "Invalid email address";
         });
-      } else {
-        setState(() {
-          errorText = null;
-        });
+        return;
       }
     }
+
+    setState(() {
+      errorText = null;
+    });
   }
+
 
   @override
   void initState() {

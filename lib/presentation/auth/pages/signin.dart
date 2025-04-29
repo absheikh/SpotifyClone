@@ -1,12 +1,19 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/widgets/appbar/app_bar.dart';
 import 'package:spotify_clone/common/widgets/button/basic_button.dart';
 import 'package:spotify_clone/common/widgets/inputs/basic_input.dart';
+import 'package:spotify_clone/common/widgets/snackbar/custom_snackbar.dart';
 import 'package:spotify_clone/core/configs/assets/app_vectors.dart';
 import 'package:spotify_clone/core/configs/theme/app_colors.dart';
+import 'package:spotify_clone/data/models/auth/signin_model.dart';
+import 'package:spotify_clone/domain/usecases/auth/signin.dart';
 import 'package:spotify_clone/presentation/auth/pages/signup.dart';
+import 'package:spotify_clone/presentation/home/pages/home.dart';
+
+import '../../../service_locator.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -16,15 +23,80 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
+
+  bool _validateForm() {
+    if (_emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
+
+      showCustomSnackbar(
+        context: context,
+        title: 'Error',
+        message: 'All fields are required',
+        contentType: ContentType.failure,
+      );
+
+      return false;
+    }
+
+    // Basic email format check (can be improved)
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(_emailController.text.trim())) {
+      showCustomSnackbar(
+        context: context,
+        title: 'Error',
+        message: 'Invalid email address',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _isLoading = false;
+
+  void signin() async {
+    if (!_validateForm()) return;
+
+    setState(() => _isLoading = true);
+
+    var res = await sl<SigninUseCase>().call(
+        params: SigninModel(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        )
+    );
+
+    setState(() => _isLoading = false);
+
+    res.fold(
+          (l) {
+            showCustomSnackbar(
+              context: context,
+              title: 'Error',
+              message: l,
+              contentType: ContentType.failure,
+            );
+      },
+          (r) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+              (route) => false,
+        );
+      },
+    );
+  }
+
 
 
   @override
@@ -34,7 +106,8 @@ class _SigninPageState extends State<SigninPage> {
           title: SvgPicture.asset(
             AppVectors.logo,
             height: 33,
-          )
+          ),
+        displayBack: true,
       ),
       // bottomNavigationBar: _footerText(context),
       body: SingleChildScrollView(
@@ -47,22 +120,25 @@ class _SigninPageState extends State<SigninPage> {
             _signinText(context),
             SizedBox(height: 15),
             BasicInput(
-                controller: emailController,
+                controller: _emailController,
                 hintText: "Email address",
-                isEmail:true
+                isEmail:true,
+                isRequired:true
             ),
             SizedBox(height: 15),
             BasicInput(
-                controller: passwordController,
+                controller: _passwordController,
                 hintText: "Password",
-                isPassword:true
+                isPassword:true,
+                isRequired: true
             ),
             SizedBox(height: 10),
             _recoverPasswordText(context),
             SizedBox(height: 20),
             BasicButton(
-                onPressed: (){},
-                title: "Sign In"
+                onPressed: signin,
+                title: "Sign In",
+                loading: _isLoading
             ),
             SizedBox(height: 20),
             _orText(context),
